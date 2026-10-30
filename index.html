@@ -1853,6 +1853,15 @@
               >→ note で実際の記事を読む</a
             >
           </p>
+          <p class="notelink reveal">
+            <a
+              href="https://suzuki-commits.github.io/comix-ceo-ai-homepage-20261008/#case"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-cta="ai_hp"
+              >→ 支援内容と実践事例を見る（経営者向け生成AI活用ロードマップ）</a
+            >
+          </p>
 
           <div class="ai-band">
             <div class="reveal">
@@ -2222,8 +2231,28 @@
                   >▸</span
                 ></a
               >
+              <a
+                class="btn btn-line"
+                href="https://www.comix.co.jp/contact/"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-cta="contact_form"
+                >AI活用を相談する（公式フォーム）<span class="arw" aria-hidden="true"
+                  >▸</span
+                ></a
+              >
             </div>
             <div class="sublinks">
+              <p class="sublink">
+                経営者向け生成AI活用ロードマップ（支援内容・実践事例） →
+                <a
+                  href="https://suzuki-commits.github.io/comix-ceo-ai-homepage-20261008/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-cta="contact_hp"
+                  >社長の時間を、粗利に変える。</a
+                >
+              </p>
               <p class="sublink">
                 note（AI活用の実践記事） →
                 <a
@@ -2292,6 +2321,20 @@
               target="_blank"
               rel="noopener noreferrer"
               >コーポレートサイト</a
+            >
+            <a
+              href="https://suzuki-commits.github.io/comix-ceo-ai-homepage-20261008/"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-cta="footer_hp"
+              >生成AI活用ロードマップ</a
+            >
+            <a
+              href="https://www.comix.co.jp/contact/"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-cta="footer_contact"
+              >AI活用のご相談</a
             >
           </nav>
           <div class="ftr-in">
@@ -2389,6 +2432,40 @@
           { threshold: 0.5 },
         );
         for (var k = 0; k < nums.length; k++) countIO.observe(nums[k]);
+      })();
+    </script>
+    <script>
+      // 流入元（utm_*）を公式フォーム・予約・アンケート・生成AI活用ロードマップへ引き継ぐ。ボタン位置は utm_term に入れる
+      (function () {
+        var keys = ["utm_source", "utm_medium", "utm_campaign", "utm_content"];
+        var landing = new URLSearchParams(location.search);
+        var utm = {};
+        keys.forEach(function (k) {
+          if (landing.get(k)) utm[k] = landing.get(k);
+        });
+        try {
+          if (utm.utm_source) sessionStorage.setItem("comixUtm", JSON.stringify(utm));
+          else utm = JSON.parse(sessionStorage.getItem("comixUtm") || "{}");
+        } catch (e) {}
+        if (!utm.utm_source)
+          utm = { utm_source: "suzuki_profile_site", utm_medium: "referral", utm_campaign: "ai_consult_202610" };
+        function tracked(u) {
+          return (
+            (u.hostname === "www.comix.co.jp" && (u.pathname.indexOf("/contact") === 0 || u.pathname.indexOf("/academy_cp/") === 0)) ||
+            /eeasy\.jp$/.test(u.hostname) ||
+            (u.hostname === "suzuki-commits.github.io" && u.pathname.indexOf("/comix-ceo-ai-homepage") === 0)
+          );
+        }
+        document.querySelectorAll('a[href^="http"]').forEach(function (a) {
+          var u;
+          try { u = new URL(a.href); } catch (e) { return; }
+          if (!tracked(u)) return;
+          var box = a.closest("section,header,footer");
+          var area = a.getAttribute("data-cta") || (box && (box.id || box.className.split(" ")[0])) || "page";
+          keys.forEach(function (k) { if (utm[k]) u.searchParams.set(k, utm[k]); });
+          u.searchParams.set("utm_term", "pf_" + area);
+          a.href = u.toString();
+        });
       })();
     </script>
   </body>
